@@ -46,46 +46,82 @@ class StudentController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'birth_date' => 'required|date',
-            'email' => 'required|string|email|unique:students,email',
+            'email' => 'required|email|unique:students,email',
             'phone_number' => 'required|string',
             'address' => 'required|string',
         ]);
 
-        if ($validatedData) {
+        if($validatedData){
             $student = Student::create([
                 'name' => $validatedData['name'],
                 'birth_date' => $validatedData['birth_date'],
                 'email' => $validatedData['email'],
                 'phone_number' => $validatedData['phone_number'],
-                'address' => $validatedData['address'],
+                'address' => $validatedData['address']
             ]);
 
-            if(!$student) {
+            if(!$student){
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'An error occured on creating a Student',
-
+                    'message' => 'Failed to create student.'
                 ]);
-
-                    return response()->json([
-                        'status' => 'success',
-                        'message' => 'Student created successfully',
-                        'data' => $student
-                    ], 201);
             }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student created successfully.',
+                'data' => $student
+            ]);
         }
-}
+    }
+        
 
     public function update(Request $request, $id){
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'birth_date' => 'required|date',
+            'email' => 'required|email|unique:students,email',
+            'phone_number' => 'required|string',
+            'address' => 'required|string',
+        ]);
 
+        $student = Student::where('id', $id)->first();
+        if(!$student){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found.',
+            ]);
+        }
+
+        $updatedStudent = $student->update([
+            'name' => $validatedData['name'],
+            'birth_date' => $validatedData['birth_date'],
+            'email' => $validatedData['email'],
+            'phone_number' => $validatedData['phone_number'],
+            'address' => $validatedData['address']
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student updated successfully.',
+            'data' => $student
+        ]);
     }
 
     public function destroy($id){
+        $student = Student::where('id', $id)->first();
+        if(!$student){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found.',
+            ]);
+        }
 
+        $student->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student deleted successfully.',
+        ]);
     }
-
-    public function toggleStudentStatus(){
-
-    }
-
+    
 }
