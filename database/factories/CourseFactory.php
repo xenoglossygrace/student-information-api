@@ -39,7 +39,7 @@ class CourseFactory extends Factory
         return [
             'course_code' => $courseCode,
             'course_name' => $courseName,
-            'discription' => $this->faker->sentence(12),
+            'description' => $this->faker->sentence(12),
             'units' => $this->faker->numberBetween(2, 5),
         ];
     }

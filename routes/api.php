@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Student;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,29 +55,20 @@ Route::put('/enrollments/{id}', [App\Http\Controllers\EnrollmentController::clas
 // Delete a enrollment
 Route::delete('/enrollments/{id}', [App\Http\Controllers\EnrollmentController::class, 'destroy']);
 
-// Get all courses a student is enrolled in
-Route::get('/students/{id}/courses', [App\Http\Controllers\StudentController::class, 'getCourses']);
+// Delete students in a specific ID range
+Route::delete('/students/range/{start}/{end}', function ($start, $end) {
+    Student::whereBetween('id', [$start, $end])->delete();
 
-// Get all students enrolled in a course
-Route::get('/courses/{id}/students', [App\Http\Controllers\CourseController::class, 'getStudents']);
+    return response()->json([
+        'message' => 'Students deleted successfully'
+    ]);
+});
 
-// Get all enrollments for a specific semester and year
-Route::get('/enrollments/semester/{semester}/year/{year}', [App\Http\Controllers\EnrollmentController::class, 'getBySemesterAndYear']); 
+// Delete courses in a specific ID range
+Route::delete('/courses/range/{start}/{end}', function ($start, $end) {
+    Course::whereBetween('id', [$start, $end])->delete();
 
-// Get all enrollments for a specific block
-Route::get('/enrollments/block/{block}', [App\Http\Controllers\EnrollmentController::class, 'getByBlock']);
-
-// Get all enrollments with a specific status
-Route::get('/enrollments/status/{status}', [App\Http\Controllers\EnrollmentController::class, 'getByStatus']);
-
-// Get all enrollments with a specific grade
-Route::get('/enrollments/grade/{grade}', [App\Http\Controllers\EnrollmentController::class, 'getByGrade']);
-
-// Search students by name or email
-Route::get('/students/search', [App\Http\Controllers\StudentController::class, 'search']);
-
-// Search courses by course name or course code
-Route::get('/courses/search', [App\Http\Controllers\CourseController::class, 'search']);
-
-// Search enrollments by student name or course name
-Route::get('/enrollments/search', [App\Http\Controllers\EnrollmentController::class, 'search']);
+    return response()->json([
+        'message' => 'Courses deleted successfully'
+    ]);
+});
